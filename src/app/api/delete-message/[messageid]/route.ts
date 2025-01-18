@@ -6,20 +6,22 @@ import { authOptions } from "../../auth/[...nextauth]/option";
 const createResponse = (success: boolean, message: string, status = 200) => {
   return Response.json({ success, message }, { status });
 };
+
 export async function DELETE(
   request: Request,
-  { params }: { params: { messageid: string } }
+  context: { params: { messageid: string } } // You can type `params` this way
 ) {
-  
-  const messageId = params.messageid;
+  const messageId = context.params.messageid; // Extract messageId from context
   await dbConnect();
   const session = await getServerSession(authOptions);
   const user: User = session?.user as User;
+
   try {
     const updatedUser = await UserModel.updateOne(
       { _id: user._id },
-      { $pull: { messages: { _id: messageId } } },
+      { $pull: { messages: { _id: messageId } } }
     );
+
     if (updatedUser.modifiedCount === 0) {
       return createResponse(false, "User not found", 404);
     }
