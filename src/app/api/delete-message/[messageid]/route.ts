@@ -9,9 +9,9 @@ const createResponse = (success: boolean, message: string, status = 200) => {
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { messageid: string } } // Destructure params directly here
+  { params }: { params: { messageid: string } }
 ) {
-  const { messageid } = await params; // Get messageid from params
+  const { messageid } = params;
   await dbConnect();
   const session = await getServerSession(authOptions);
   const user: User = session?.user as User;
@@ -19,7 +19,7 @@ export async function DELETE(
   try {
     const updatedUser = await UserModel.updateOne(
       { _id: user._id },
-      { $pull: { messages: { _id: messageid } } } // Use messageid here
+      { $pull: { messages: { _id: messageid } } }
     );
 
     if (updatedUser.modifiedCount === 0) {
