@@ -9,9 +9,9 @@ const createResponse = (success: boolean, message: string, status = 200) => {
 
 export async function DELETE(
   request: Request,
-  context: { params: { messageid: string } } // Destructure params directly here
+  context: { params: Promise<{ messageid: string }> } // Destructure params directly here
 ) {
-  const { messageid } = context.params; // Get messageid from params
+  const  messageid  = (await (context).params).messageid; // Get messageid from params
 
   // Connect to the database
   await dbConnect();
