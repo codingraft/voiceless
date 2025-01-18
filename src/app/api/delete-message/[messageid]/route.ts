@@ -4,14 +4,14 @@ import { getServerSession, User } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/option";
 
 const createResponse = (success: boolean, message: string, status = 200) => {
-  return Response.json({ success, message }, { status });
+  return new Response(JSON.stringify({ success, message }), { status });
 };
 
 export async function DELETE(
   request: Request,
-  context: { params: { messageid: string } } // You can type `params` this way
+  { params }: { params: { messageid: string } } // Destructure params directly here
 ) {
-  const messageId = context.params.messageid; // Extract messageId from context
+  const { messageid } = await params; // Get messageid from params
   await dbConnect();
   const session = await getServerSession(authOptions);
   const user: User = session?.user as User;
@@ -19,7 +19,7 @@ export async function DELETE(
   try {
     const updatedUser = await UserModel.updateOne(
       { _id: user._id },
-      { $pull: { messages: { _id: messageId } } }
+      { $pull: { messages: { _id: messageid } } } // Use messageid here
     );
 
     if (updatedUser.modifiedCount === 0) {
