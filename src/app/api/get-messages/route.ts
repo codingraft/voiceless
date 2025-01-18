@@ -24,9 +24,10 @@ export async function GET() {
       { $sort: { 'messages.createdAt': -1 } },
       { $group: { _id: "$_id", messages: { $push: "$messages" } } },
     ]).exec();
-    if (!user) {
+    if (!user || user.length === 0) {
       return Response.json({ success: false, message: "User not found", status: 404 });
     }
+    if(user[0].messages.length === 0) return Response.json({ success: true, messages: [] }, { status: 200 });
     return Response.json({ success: true, messages: user[0].messages }, { status: 200 });
   } catch (error) {
     console.log("Error in getting messages", error);

@@ -6,7 +6,11 @@ import { authOptions } from "../../auth/[...nextauth]/option";
 const createResponse = (success: boolean, message: string, status = 200) => {
   return Response.json({ success, message }, { status });
 };
-export async function DELETE(_: Request, { params }: { params: { messageid: string } }) {
+export async function DELETE(
+  request: Request,
+  { params }: { params: { messageid: string } }
+) {
+  
   const messageId = params.messageid;
   await dbConnect();
   const session = await getServerSession(authOptions);
