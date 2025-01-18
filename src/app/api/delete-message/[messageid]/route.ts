@@ -3,14 +3,7 @@ import UserModel from "@/model/User.model";
 import { getServerSession, User } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/option";
 
-const createResponse = (success: boolean, message: string, status = 200) => {
-  return new Response(JSON.stringify({ success, message }), { status });
-};
-
-export async function DELETE(
-  request: Request,
-  { params }: { params: { messageid: string } }
-) {
+export async function DELETE({ params }: { params: { messageid: string } }) {
   const { messageid } = params;
   await dbConnect();
   const session = await getServerSession(authOptions);
@@ -23,11 +16,17 @@ export async function DELETE(
     );
 
     if (updatedUser.modifiedCount === 0) {
-      return createResponse(false, "User not found", 404);
+      return Response.json({ success: false, message: "Message not found" });
     }
-    return createResponse(true, "Message deleted successfully", 200);
+    return Response.json({
+      success: true,
+      message: "Message deleted successfully",
+    });
   } catch (error) {
     console.log("Error in deleting message", error);
-    return createResponse(false, "Error in deleting message", 500);
+    return Response.json({
+      success: false,
+      message: "Error in deleting message",
+    });
   }
 }
